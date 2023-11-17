@@ -21,5 +21,30 @@ def index() -> str:
     return jsonify({"message": "Bienvenue"})
 
 
+@app.route('/users', methods=['POST'])
+def users() -> str:
+    """
+    Register a new user.
+
+    This endpoint expects two form data fields: "email" and "password".
+    If the user does not exist, it registers the user and responds with
+    a JSON payload.
+    If the user is already registered, it returns a JSON payload indicating
+    the user is already registered.
+
+    Returns:
+        JSON: JSON response indicating the status of user registration.
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    # regsiter user if user does not exist
+    try:
+        user = AUTH.register_user(email, password)
+        return jsonify({"email": user.email, "message": "user created"})
+    except Exception:
+        return jsonify({"message": "email already registered"}), 400
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
